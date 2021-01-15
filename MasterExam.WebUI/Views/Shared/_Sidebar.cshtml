@@ -1,0 +1,43 @@
+﻿<!--
+              Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red"
+          -->
+<div class="sidebar">
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="javascript:void(0)" class="simple-text logo-mini">
+                CT
+            </a>
+            <a href="javascript:void(0)" class="simple-text logo-normal">
+                Admin Panel
+            </a>
+        </div>
+        <ul class="nav">
+            <li class="active">
+                <a asp-controller="Home" asp-action="Index">
+                    <i class="tim-icons icon-chart-pie-36"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li>
+                <a data-toggle="collapse" href="#operation">
+                    <i class="fa fa-product-hunt"></i>
+                    <p>
+                        Operation
+                        <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse" id="operation">
+                    <ul class="nav">
+                        <li>
+                            <a asp-controller="Product" asp-action="Index">
+                                <span class="sidebar-mini-icon">P</span>
+                                <span class="sidebar-normal"> Products </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</div>

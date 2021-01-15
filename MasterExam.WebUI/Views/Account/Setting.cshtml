@@ -1,0 +1,65 @@
+﻿@model AccountSettingViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Setting";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form  asp-controller="Account" asp-action="Setting" method="post" class="form-horizontal" novalidate="novalidate">
+            @Html.AntiForgeryToken()
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Sazlamalar</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <label asp-for="Id" class="col-sm-2 col-form-label">Id</label>
+                        <div class="col-sm-7">
+                            <div class="form-group">
+                                <input asp-for="Id" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label asp-for="UserName" class="col-sm-2 col-form-label">UserName</label>
+                        <div class="col-sm-7">
+                            <div class="form-group">
+                                <input asp-for="UserName" class="form-control" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label asp-for="Email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-7">
+                            <div class="form-group">
+                                <input asp-for="Email" class="form-control" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label asp-for="Password" class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-7">
+                            <div class="form-group">
+                                <input asp-for="Password" class="form-control" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label asp-for="ConfirmPassword" class="col-sm-2 col-form-label">ConfirmPassword</label>
+                        <div class="col-sm-7">
+                            <div class="form-group">
+                                <input asp-for="ConfirmPassword" class="form-control" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-primary">Yadda saxla</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

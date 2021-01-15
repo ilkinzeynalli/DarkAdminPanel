@@ -1,0 +1,62 @@
+﻿@model LoginModel
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="container">
+    <div class="col-lg-4 col-md-6 ml-auto mr-auto">
+        @if (TempData["Message"] != null)
+        {
+        <div class="alert alert-success">@TempData["Message"]</div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+             @Html.AntiForgeryToken()
+             <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+
+             <div class="card card-login card-white">
+                 <div class="card-header">
+                     <img src="~/assets/img/card-primary.png" alt="">
+                     <h1 class="card-title">Giriş</h1>
+                 </div>
+                 <div class="card-body">
+                     <div class="input-group">
+                         <div class="input-group-prepend">
+                             <div class="input-group-text">
+                                 <i class="tim-icons icon-email-85"></i>
+                             </div>
+                         </div>
+                         <input asp-for="Email" class="form-control" placeholder="Email">
+                     </div>
+                     <div class="input-group">
+                         <div class="input-group-prepend">
+                             <div class="input-group-text">
+                                 <i class="tim-icons icon-lock-circle"></i>
+                             </div>
+                         </div>
+                         <input asp-for="Password" class="form-control" placeholder="Password">
+                     </div>
+
+                     <div asp-validation-summary="All" class="text-danger"></div>
+                 </div>
+                 <div class="card-footer">
+                     <button class="btn btn-primary btn-lg btn-block mb-3">
+                         <i class="fa fa-sign-in"></i>
+                         Giriş
+                     </button>
+                     <div class="pull-left">
+                         <h6>
+                             <a asp-controller="Account" asp-action="Register" class="link footer-link">Yeni hesab yarat</a>
+                         </h6>
+                     </div>
+                     <div class="pull-right">
+                         <h6>
+                             <a href="javascript:void(0)" class="link footer-link">Yardima ehtiyacin var?</a>
+                         </h6>
+                     </div>
+                 </div>
+             </div>
+         </form>
+    </div>
+</div>
+            

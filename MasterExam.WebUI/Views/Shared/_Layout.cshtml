@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="~/assets/img/favicon.png">
+    <title>
+        @ViewBag.Title
+    </title>
+
+    <!-- Fonts and icons  -->
+    <link href="/modules/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <!-- Nucleo Icons -->
+    <link href="~/assets/css/nucleo-icons.css" rel="stylesheet" />
+    <!-- CSS Files -->
+    <link href="~/assets/css/black-dashboard.min3f71.css?v=1.1.1" rel="stylesheet" />
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link href="~/assets/demo/demo.css" rel="stylesheet" />
+    <!--My Styles-->
+    <link href="~/css/CustomStyles.css" rel="stylesheet" asp-append-version="true" />
+
+    @RenderSection("styles",false)
+</head>
+
+<body class="login-page">
+    <div class="wrapper wrapper-full-page ">
+        <div class="full-page login-page ">
+            <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+            <div class="content">
+                <div class="container">
+                    @RenderBody()
+                </div>
+
+            </div>
+            <partial name="_footer" />
+        </div>
+    </div>
+
+    <script src="~/assets/js/core/jquery.min.js"></script>
+
+    <script src="~/js/customScript.js" asp-append-version="true"></script>
+
+    @RenderSection("scripts", false)
+
+</body>
+
+</html>

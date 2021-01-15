@@ -1,0 +1,11 @@
+﻿input.input-validation-error,
+select.input-validation-error
+{
+    background: pink;
+    border: 1px solid red;
+}
+
+
+form div>ul>li {
+    color: red;
+}
