@@ -15,6 +15,7 @@
                     <h4 class="card-title">Sazlamalar</h4>
                 </div>
                 <div class="card-body">
+                    <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="row">
                         <label asp-for="Id" class="col-sm-2 col-form-label">Id</label>
                         <div class="col-sm-7">
@@ -27,7 +28,7 @@
                         <label asp-for="UserName" class="col-sm-2 col-form-label">UserName</label>
                         <div class="col-sm-7">
                             <div class="form-group">
-                                <input asp-for="UserName" class="form-control" >
+                                <input asp-for="UserName" class="form-control" readonly>
                             </div>
                         </div>
                     </div>
@@ -35,7 +36,7 @@
                         <label asp-for="Email" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-7">
                             <div class="form-group">
-                                <input asp-for="Email" class="form-control" >
+                                <input  asp-for="Email" class="form-control" readonly>
                             </div>
                         </div>
                     </div>
@@ -43,7 +44,7 @@
                         <label asp-for="Password" class="col-sm-2 col-form-label">Password</label>
                         <div class="col-sm-7">
                             <div class="form-group">
-                                <input asp-for="Password" class="form-control" >
+                                <input  asp-for="Password" class="form-control" >
                             </div>
                         </div>
                     </div>

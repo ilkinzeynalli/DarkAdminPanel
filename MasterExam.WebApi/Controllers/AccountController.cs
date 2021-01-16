@@ -73,7 +73,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                     return Ok(new JWT { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
                 }
 
-                return Forbid();
+                return Unauthorized();
             }
 
             return BadRequest();
@@ -161,6 +161,30 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             return NotFound();
 
+        }
+
+        [AuthorizeRoles(Roles.Admin,Roles.User)]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ChangePassword([FromBody] AccountSettingModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            if (token != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+
+                if (result.Succeeded)
+                    return Ok();
+                else
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Password was not reset successfully");
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Couldn't assign token");
         }
 
     }

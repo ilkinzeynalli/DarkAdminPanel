@@ -15,6 +15,7 @@ namespace DarkAdminPanel.WebApi.Modules
         {
             services.AddTransient<IValidator<LoginModel>, LoginModelValidator>();
             services.AddTransient<IValidator<RegisterModel>, RegisterModelValidator>();
+            services.AddTransient<IValidator<AccountSettingModel>, AccountSettingModelValidator>();
         }
     }
 }

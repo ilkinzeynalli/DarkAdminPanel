@@ -26,7 +26,6 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
             _loginManager = loginManager;
         }
 
-       
         public async Task<HttpResponseMessage> GetUserByNameAsync(string userName)
         {
              HttpResponseMessage response = await _client.AddHeader()
@@ -55,5 +54,17 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 
             return response;
         }
+        public async Task<HttpResponseMessage> ChangePasswordAsync(AccountSettingModel model)
+        {
+            string data = JsonConvert.SerializeObject(model);
+            var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _client.AddHeader()
+                                                    .AddTokenToHeader(_loginManager.Token)
+                                                    .PutAsync("/api/Account/ChangePassword", contentData);
+
+            return response;
+        }
+
     }
 }

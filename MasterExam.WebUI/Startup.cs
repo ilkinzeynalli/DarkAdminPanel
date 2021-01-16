@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DarkAdminPanel.WebUI.ApiClients.Abstract;
 using DarkAdminPanel.WebUI.ApiClients.Concrete;
 using DarkAdminPanel.WebUI.Extensions;
+using DarkAdminPanel.WebUI.Mapping;
 using DarkAdminPanel.WebUI.Middlewares;
 using DarkAdminPanel.WebUI.Modules;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -44,6 +45,9 @@ namespace MasterExam.WebUI
             services.AddSession();
             services.AddHttpContextAccessor();
 
+            // Auto Mapper Configurations
+            services.AddSingleton(AutoMapperConfig.CreateMapper());
+
             //Configure DI for application services
             LogicModule.Load(services);
 
@@ -52,6 +56,8 @@ namespace MasterExam.WebUI
 
             //Adding HttpClient module
             HttpClientModule.Load(services);
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

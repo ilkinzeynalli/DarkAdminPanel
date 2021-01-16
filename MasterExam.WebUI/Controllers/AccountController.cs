@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using DarkAdminPanel.Core.Concrete.RequestInputModels;
 using DarkAdminPanel.Core.Concrete.ResponseOutputModels;
 using DarkAdminPanel.WebUI.ApiClients.Abstract;
@@ -25,11 +26,13 @@ namespace DarkAdminPanel.WebUI.Controllers
     {
         private readonly ILoginService _loginManager;
         private readonly IAccountApiClient _accountApiClient;
+        public readonly IMapper _mapper;
 
-        public AccountController(IAccountApiClient accountApiClient, ILoginService loginManager)
+        public AccountController(IAccountApiClient accountApiClient, ILoginService loginManager, IMapper mapper)
         {
             _accountApiClient = accountApiClient;
             _loginManager = loginManager;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -41,7 +44,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model,  string returnUrl)
+        public async Task<IActionResult> Login(LoginModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -49,29 +52,30 @@ namespace DarkAdminPanel.WebUI.Controllers
 
                 string result = await response.Content.ReadAsStringAsync();
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                switch ((int)response.StatusCode)
                 {
-                    var jwt = JsonConvert.DeserializeObject<JWT>(result);
+                    case (int)HttpStatusCode.OK:
+                        var jwt = JsonConvert.DeserializeObject<JWT>(result);
+                        _loginManager.Token = jwt.Token;
 
-                    _loginManager.Token = jwt.Token;
+                        return Redirect(returnUrl ?? "/Home/Index");
 
-                    return Redirect(returnUrl ?? "/Home/Index");
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var badRequest =  JsonConvert.DeserializeObject<BadRequest>(result);
+                    case (int)HttpStatusCode.BadRequest:
+                        var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
+                        foreach (var key in badRequest.Errors.Keys)
+                            foreach (var value in badRequest.Errors[key])
+                                ModelState.AddModelError(key, value);
+                        break;
 
-                    foreach (var key in badRequest.Errors.Keys)
-                    {
-                        foreach (var value in badRequest.Errors[key])
-                        {
-                            ModelState.AddModelError(key, value);
-                        }
-                    }
-                }
-                else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    ModelState.AddModelError("", "Email ve ya Sifre yalnisdir");
+                    case (int)HttpStatusCode.Conflict:
+                    case (int)HttpStatusCode.InternalServerError:
+                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        ModelState.AddModelError("", errors.Message);
+                        break;
+
+                    case (int)HttpStatusCode.Unauthorized:
+                        ModelState.AddModelError("", "Email ve ya Sifre yalnisdir");
+                        break;
                 }
             }
             return View(model);
@@ -97,39 +101,29 @@ namespace DarkAdminPanel.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-               var response = await _accountApiClient.RegisterAsync(model);
-               string result = await response.Content.ReadAsStringAsync();
+                var response = await _accountApiClient.RegisterAsync(model);
+                string result = await response.Content.ReadAsStringAsync();
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                switch ((int)response.StatusCode)
                 {
-                    TempData["Message"] = "User basariyla yarildi";
-                    return RedirectToAction("Login", "Account");
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
+                    case (int)HttpStatusCode.OK:
+                        TempData["Message"] = "User basariyla yarildi";
+                        return RedirectToAction("Login", "Account");
 
-                    foreach (var key in badRequest.Errors.Keys)
-                    {
-                        foreach (var value in badRequest.Errors[key])
-                        {
-                            ModelState.AddModelError(key, value);
-                        }
-                    }
-                }
-                else if (response.StatusCode == HttpStatusCode.Conflict)
-                {
-                    var conflict = JsonConvert.DeserializeObject<Response>(result);
+                    case (int)HttpStatusCode.BadRequest:
+                        var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
+                        foreach (var key in badRequest.Errors.Keys)
+                            foreach (var value in badRequest.Errors[key])
+                                ModelState.AddModelError(key, value);
+                        break;
 
-                    ModelState.AddModelError("", conflict.Message);
-                }
-                else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var internalServerError = JsonConvert.DeserializeObject<Response>(result);
+                    case (int)HttpStatusCode.Conflict:
+                    case (int)HttpStatusCode.InternalServerError:
+                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        ModelState.AddModelError("", errors.Message);
+                        break;
 
-                    ModelState.AddModelError("", internalServerError.Message);
                 }
-
             }
 
             return View(model);
@@ -138,21 +132,55 @@ namespace DarkAdminPanel.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Setting()
         {
-            var user = await _accountApiClient.GetUserByNameAsync(_loginManager.UserName);
-            string result = await user.Content.ReadAsStringAsync();
+            var response = await _accountApiClient.GetUserByNameAsync(_loginManager.UserName);
 
-            if (user.StatusCode == HttpStatusCode.OK)
-            {
-                var existUser = JsonConvert.DeserializeObject<AccountSettingViewModel>(result);
+            string result = await response.Content.ReadAsStringAsync();
 
-                return View(existUser);
-            }
-            else if (user.StatusCode == HttpStatusCode.NotFound)
+            switch ((int)response.StatusCode)
             {
-                return NotFound();
+                case (int)HttpStatusCode.OK:
+                    var existUser = JsonConvert.DeserializeObject<AccountSettingViewModel>(result);
+                    return View(existUser);
+                case (int)HttpStatusCode.NotFound:
+                    return NotFound();
             }
-          
+
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Setting(AccountSettingViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var accountSettingModel = _mapper.Map<AccountSettingModel>(model);
+
+                var response = await _accountApiClient.ChangePasswordAsync(accountSettingModel);
+                string result = await response.Content.ReadAsStringAsync();
+
+                switch ((int)response.StatusCode)
+                {
+                    case (int)HttpStatusCode.OK:
+                        _loginManager.Logout();
+                        return RedirectToAction("Login", "Account");
+
+                    case (int)HttpStatusCode.BadRequest:
+                        var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
+                        foreach (var key in badRequest.Errors.Keys)
+                            foreach (var value in badRequest.Errors[key])
+                                ModelState.AddModelError(key, value);
+                        break;
+
+                    case (int)HttpStatusCode.Conflict:
+                    case (int)HttpStatusCode.InternalServerError:
+                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        ModelState.AddModelError("", errors.Message);
+                        break;
+
+                }
+            }
+
+            return View(model);
         }
     }
 }
