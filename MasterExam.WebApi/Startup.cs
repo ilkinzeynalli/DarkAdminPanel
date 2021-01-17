@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Seeders;
+using DarkAdminPanel.WebApi.Mapping;
 using DarkAdminPanel.WebApi.Modules;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -39,6 +40,11 @@ namespace MasterExam.WebApi
                     x => x.MigrationsAssembly("DarkAdminPanel.DataAccess"));
             });
 
+            services.AddSingleton(AutoMapperConfig.CreateMapper());
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen();
+
             //Adding Identity Server
             IdentityServerModule.Load(services);
 
@@ -58,6 +64,16 @@ namespace MasterExam.WebApi
 
                 SeederIdentityData.EnsurePopulated(app, _configuration).Wait();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseRouting();
 

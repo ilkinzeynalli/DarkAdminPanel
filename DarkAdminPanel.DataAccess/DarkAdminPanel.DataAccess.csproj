@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Core.csproj" />
+    <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Entities.csproj" />
   </ItemGroup>
 
 </Project>

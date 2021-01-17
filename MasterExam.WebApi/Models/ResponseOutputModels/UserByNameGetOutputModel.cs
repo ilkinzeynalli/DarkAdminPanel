@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace DarkAdminPanel.Core.Concrete.RequestInputModels
+namespace DarkAdminPanel.WebApi.ResponseOutputModels
 {
-    public class AccountSettingModel
+    public class UserByNameGetOutputModel
     {
         public string UserId { get; set; }
 
@@ -14,11 +14,5 @@ namespace DarkAdminPanel.Core.Concrete.RequestInputModels
 
         [UIHint("email")]
         public string Email { get; set; }
-
-        [UIHint("password")]
-        public string Password { get; set; }
-
-        [UIHint("password")]
-        public string ConfirmPassword { get; set; }
     }
 }

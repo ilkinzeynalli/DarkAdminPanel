@@ -1,4 +1,4 @@
-﻿using DarkAdminPanel.Core.Concrete.RequestInputModels;
+﻿using DarkAdminPanel.WebApi.RequestInputModels;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DarkAdminPanel.WebApi.FluentValidations
 {
-    public class LoginModelValidator : AbstractValidator<LoginModel>
+    public class LoginInputModelValidator : AbstractValidator<LoginInputModel>
     {
-        public LoginModelValidator()
+        public LoginInputModelValidator()
         {
             RuleFor(p => p.Email).NotNull().WithMessage("Email daxil edin");
             RuleFor(p => p.Email).NotEmpty().WithMessage("Email daxil edin");

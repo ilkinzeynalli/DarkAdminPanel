@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkAdminPanel.Core.Concrete.ResponseOutputModels
+namespace DarkAdminPanel.WebApi.ResponseOutputModels
 {
-    public class Response
+    public class ResponseOutputModel
     {
         public int Status { get; set; }
         public string Message { get; set; }

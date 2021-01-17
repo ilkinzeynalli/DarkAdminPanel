@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkAdminPanel.Core.Concrete.Attributes
+namespace DarkAdminPanel.WebApi.Attributes
 {
     public class AuthorizeRolesAttribute : AuthorizeAttribute
     {

@@ -1,8 +1,6 @@
-﻿using DarkAdminPanel.Core.Concrete.Models;
-using DarkAdminPanel.Core.Concrete.RequestInputModels;
-using DarkAdminPanel.Core.Concrete.ResponseOutputModels;
-using DarkAdminPanel.WebUI.ApiClients.Abstract;
+﻿using DarkAdminPanel.WebUI.ApiClients.Abstract;
 using DarkAdminPanel.WebUI.Extensions;
+using DarkAdminPanel.WebUI.RequestInputModels;
 using DarkAdminPanel.WebUI.Services.Abstract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +32,7 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 
             return response;
         }
-        public async Task<HttpResponseMessage> LoginAsync(LoginModel model)
+        public async Task<HttpResponseMessage> LoginAsync(LoginInputModel model)
         {
             string data = JsonConvert.SerializeObject(model);
             var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
@@ -43,7 +41,7 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 
             return response;
         }
-        public async Task<HttpResponseMessage> RegisterAsync(RegisterModel model)
+        public async Task<HttpResponseMessage> RegisterAsync(RegisterInputModel model)
         {
             string data = JsonConvert.SerializeObject(model);
             var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
@@ -54,7 +52,7 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 
             return response;
         }
-        public async Task<HttpResponseMessage> ChangePasswordAsync(AccountSettingModel model)
+        public async Task<HttpResponseMessage> ChangePasswordAsync(ChangePasswordInputModel model)
         {
             string data = JsonConvert.SerializeObject(model);
             var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");

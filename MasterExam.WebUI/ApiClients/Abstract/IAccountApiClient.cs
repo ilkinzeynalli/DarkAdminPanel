@@ -1,6 +1,4 @@
-﻿using DarkAdminPanel.Core.Concrete.RequestInputModels;
-using DarkAdminPanel.Core.Concrete.ResponseOutputModels;
-using DarkAdminPanel.WebUI.ViewModels;
+﻿using DarkAdminPanel.WebUI.RequestInputModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +9,9 @@ namespace DarkAdminPanel.WebUI.ApiClients.Abstract
 {
     public interface IAccountApiClient
     {
-        Task<HttpResponseMessage> LoginAsync(LoginModel model);
-        Task<HttpResponseMessage> RegisterAsync(RegisterModel model);
+        Task<HttpResponseMessage> LoginAsync(LoginInputModel model);
+        Task<HttpResponseMessage> RegisterAsync(RegisterInputModel model);
         Task<HttpResponseMessage> GetUserByNameAsync(string userEmail);
-        Task<HttpResponseMessage> ChangePasswordAsync(AccountSettingModel model);
+        Task<HttpResponseMessage> ChangePasswordAsync(ChangePasswordInputModel model);
     }
 }

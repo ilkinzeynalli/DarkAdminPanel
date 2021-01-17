@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DarkAdminPanel.Core.Concrete.ResponseOutputModels
+namespace DarkAdminPanel.WebApi.ResponseOutputModels
 {
-    public class JWT
+    public class JwtOutputModel
     {
         public string Token { get; set; }
         public DateTime Expiration { get; set; }

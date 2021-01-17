@@ -4,6 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DarkAdminPanel.WebUI.Attributes;
+using DarkAdminPanel.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +14,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        [Authorize(Roles = "Admin,User")]
+        [AuthorizeRoles(Roles.Admin,Roles.User)]
         public IActionResult Index()
         {
             //var token = HttpContext.Session.GetString("JWToken");

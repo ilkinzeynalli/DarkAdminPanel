@@ -82,9 +82,10 @@ namespace MasterExam.WebUI
             app.UseMiddleware<HttpRequestHeaderMiddleware>();
 
             //Add StatusCode Page middleware
+            app.UseStatusCodePages();
             app.UseStatusCodePages(async context =>
                         {
-                            var request = context.HttpContext.Request;
+                            var request =  context.HttpContext.Request;
                             var response = context.HttpContext.Response;
 
                             if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
@@ -93,7 +94,6 @@ namespace MasterExam.WebUI
                                 var returnUrl = String.Format("/{0}/{1}", request.RouteValues["controller"], request.RouteValues["action"]);
 
                                 context.HttpContext.Session.SetJson("JWToken", null);
-
                                 response.Redirect("/Account/Login?ReturnUrl=" + returnUrl);
                             }
                         }

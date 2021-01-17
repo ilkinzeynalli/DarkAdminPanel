@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace DarkAdminPanel.Core.Concrete.RequestInputModels
+namespace DarkAdminPanel.WebUI.RequestInputModels
 {
-    public class LoginModel
+    public class RegisterInputModel
     {
+        [UIHint("email")]
+        public string UserName { get; set; }
         [UIHint("email")]
         public string Email { get; set; }
         [UIHint("password")]

@@ -1,4 +1,4 @@
-﻿using DarkAdminPanel.Core.Concrete.RequestInputModels;
+﻿using DarkAdminPanel.WebApi.RequestInputModels;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DarkAdminPanel.WebApi.FluentValidations
 {
-    public class AccountSettingModelValidator: AbstractValidator<AccountSettingModel>
+    public class AccountSettingInputModelValidator: AbstractValidator<ChangePasswordInputModel>
     {
-        public AccountSettingModelValidator()
+        public AccountSettingInputModelValidator()
         {
             RuleFor(r => r.Password).NotEmpty().WithMessage("Password daxil edin");
 

@@ -8,13 +8,12 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using DarkAdminPanel.Core.Concrete.RequestInputModels;
-using DarkAdminPanel.Core.Concrete.ResponseOutputModels;
 using DarkAdminPanel.WebUI.ApiClients.Abstract;
 using DarkAdminPanel.WebUI.Extensions;
 using DarkAdminPanel.WebUI.Models;
+using DarkAdminPanel.WebUI.RequestInputModels;
+using DarkAdminPanel.WebUI.ResponseOutputModels;
 using DarkAdminPanel.WebUI.Services.Abstract;
-using DarkAdminPanel.WebUI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +43,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model, string returnUrl)
+        public async Task<IActionResult> Login(LoginInputModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -55,7 +54,7 @@ namespace DarkAdminPanel.WebUI.Controllers
                 switch ((int)response.StatusCode)
                 {
                     case (int)HttpStatusCode.OK:
-                        var jwt = JsonConvert.DeserializeObject<JWT>(result);
+                        var jwt = JsonConvert.DeserializeObject<JwtOutputModel>(result);
                         _loginManager.Token = jwt.Token;
 
                         return Redirect(returnUrl ?? "/Home/Index");
@@ -69,7 +68,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
                     case (int)HttpStatusCode.Conflict:
                     case (int)HttpStatusCode.InternalServerError:
-                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        var errors = JsonConvert.DeserializeObject<ResponseOutputModel>(result);
                         ModelState.AddModelError("", errors.Message);
                         break;
 
@@ -81,8 +80,7 @@ namespace DarkAdminPanel.WebUI.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public IActionResult Logout()
         {
             _loginManager.Logout();
@@ -97,7 +95,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterInputModel model)
         {
             if (ModelState.IsValid)
             {
@@ -119,7 +117,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
                     case (int)HttpStatusCode.Conflict:
                     case (int)HttpStatusCode.InternalServerError:
-                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        var errors = JsonConvert.DeserializeObject<ResponseOutputModel>(result);
                         ModelState.AddModelError("", errors.Message);
                         break;
 
@@ -130,7 +128,7 @@ namespace DarkAdminPanel.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Setting()
+        public async Task<IActionResult> ChangePassword()
         {
             var response = await _accountApiClient.GetUserByNameAsync(_loginManager.UserName);
 
@@ -139,7 +137,7 @@ namespace DarkAdminPanel.WebUI.Controllers
             switch ((int)response.StatusCode)
             {
                 case (int)HttpStatusCode.OK:
-                    var existUser = JsonConvert.DeserializeObject<AccountSettingViewModel>(result);
+                    var existUser = JsonConvert.DeserializeObject<ChangePasswordInputModel>(result);
                     return View(existUser);
                 case (int)HttpStatusCode.NotFound:
                     return NotFound();
@@ -149,11 +147,11 @@ namespace DarkAdminPanel.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Setting(AccountSettingViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordInputModel model)
         {
             if (ModelState.IsValid)
             {
-                var accountSettingModel = _mapper.Map<AccountSettingModel>(model);
+                var accountSettingModel = _mapper.Map<ChangePasswordInputModel>(model);
 
                 var response = await _accountApiClient.ChangePasswordAsync(accountSettingModel);
                 string result = await response.Content.ReadAsStringAsync();
@@ -161,8 +159,8 @@ namespace DarkAdminPanel.WebUI.Controllers
                 switch ((int)response.StatusCode)
                 {
                     case (int)HttpStatusCode.OK:
-                        _loginManager.Logout();
-                        return RedirectToAction("Login", "Account");
+                        TempData["Message"] = "Şifrə başarıyla dəyişdirildi...!";
+                        return RedirectToAction("Logout", "Account");
 
                     case (int)HttpStatusCode.BadRequest:
                         var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
@@ -173,7 +171,7 @@ namespace DarkAdminPanel.WebUI.Controllers
 
                     case (int)HttpStatusCode.Conflict:
                     case (int)HttpStatusCode.InternalServerError:
-                        var errors = JsonConvert.DeserializeObject<Response>(result);
+                        var errors = JsonConvert.DeserializeObject<ResponseOutputModel>(result);
                         ModelState.AddModelError("", errors.Message);
                         break;
 

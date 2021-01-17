@@ -72,11 +72,11 @@
                             <a href="javascript:void(0)" class="nav-item dropdown-item">Profil</a>
                         </li>
                         <li class="nav-link">
-                            <a asp-controller="Account" asp-action="Setting" class="nav-item dropdown-item">Sazlamalar</a>
+                            <a asp-controller="Account" asp-action="ChangePassword" class="nav-item dropdown-item">Şifrəni dəyiş</a>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li class="nav-link">
-                            <form asp-controller="Account" asp-action="Logout" method="post">
+                            <form asp-controller="Account" asp-action="Logout" method="get">
                                 @Html.AntiForgeryToken()
                                 <button class="nav-item dropdown-item">Çıxış et</button>
                             </form>

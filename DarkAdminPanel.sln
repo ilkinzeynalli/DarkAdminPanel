@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DarkAdminPanel.WebUI", "Mas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DarkAdminPanel.WebApi", "MasterExam.WebApi\DarkAdminPanel.WebApi.csproj", "{66D11F64-DEBB-43B1-88BE-14F4223E8BA1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DarkAdminPanel.Core", "MasterExam.Entities\DarkAdminPanel.Core.csproj", "{35CFC6B7-FFE9-45FE-928C-462E5360132D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DarkAdminPanel.Entities", "MasterExam.Entities\DarkAdminPanel.Entities.csproj", "{35CFC6B7-FFE9-45FE-928C-462E5360132D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DarkAdminPanel.DataAccess", "DarkAdminPanel.DataAccess\DarkAdminPanel.DataAccess.csproj", "{B8BAC2CE-D568-4909-9374-6CC939A1B7C8}"
 EndProject

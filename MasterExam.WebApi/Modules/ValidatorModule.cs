@@ -1,5 +1,5 @@
-﻿using DarkAdminPanel.Core.Concrete.RequestInputModels;
-using DarkAdminPanel.WebApi.FluentValidations;
+﻿using DarkAdminPanel.WebApi.FluentValidations;
+using DarkAdminPanel.WebApi.RequestInputModels;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,9 +13,9 @@ namespace DarkAdminPanel.WebApi.Modules
     {
         public static void Load(IServiceCollection services)
         {
-            services.AddTransient<IValidator<LoginModel>, LoginModelValidator>();
-            services.AddTransient<IValidator<RegisterModel>, RegisterModelValidator>();
-            services.AddTransient<IValidator<AccountSettingModel>, AccountSettingModelValidator>();
+            services.AddTransient<IValidator<LoginInputModel>, LoginInputModelValidator>();
+            services.AddTransient<IValidator<RegisterInputModel>, RegisterInputModelValidator>();
+            services.AddTransient<IValidator<ChangePasswordInputModel>, AccountSettingInputModelValidator>();
         }
     }
 }

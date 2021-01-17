@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DarkAdminPanel.Core.Concrete.Models;
+using DarkAdminPanel.WebUI.Attributes;
+using DarkAdminPanel.WebUI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkAdminPanel.WebUI.Controllers
 {
-    [Authorize(Roles = Roles.User)]
+    [AuthorizeRoles(Roles.User)]
     public class ProductController : Controller
     {
         public IActionResult Index()

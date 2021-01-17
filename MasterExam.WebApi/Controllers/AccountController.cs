@@ -5,12 +5,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using DarkAdminPanel.Core.Concrete.Attributes;
+using AutoMapper;
 using DarkAdminPanel.Core.Concrete.Models;
-using DarkAdminPanel.Core.Concrete.RequestInputModels;
-using DarkAdminPanel.Core.Concrete.ResponseOutputModels;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels;
+using DarkAdminPanel.WebApi.Attributes;
 using DarkAdminPanel.WebApi.FluentValidations;
+using DarkAdminPanel.WebApi.RequestInputModels;
+using DarkAdminPanel.WebApi.ResponseOutputModels;
 using DarkAdminPanel.WebApi.Routing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,18 +29,21 @@ namespace DarkAdminPanel.WebApi.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 RoleManager<ApplicationRole> roleManager,
-                                IConfiguration configuration)
+                                IConfiguration configuration,
+                                IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _mapper = mapper;
         }
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginInputModel model)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +74,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                         signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                    return Ok(new JWT { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
+                    return Ok(new JwtOutputModel { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
                 }
 
                 return Unauthorized();
@@ -81,14 +85,14 @@ namespace DarkAdminPanel.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterInputModel model)
         {
             if (ModelState.IsValid)
             {
                 var userExists = await _userManager.FindByEmailAsync(model.Email);
 
                 if (userExists != null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = StatusCodes.Status500InternalServerError, Message = "User already exists!" });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User already exists!" });
 
                 ApplicationUser user = new ApplicationUser()
                 {
@@ -99,7 +103,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
 
                 if (!await _roleManager.RoleExistsAsync(Roles.User))
                     await _roleManager.CreateAsync(new ApplicationRole { Name = Roles.User });
@@ -115,14 +119,14 @@ namespace DarkAdminPanel.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterInputModel model)
         {
             if (ModelState.IsValid)
             {
                 var userExists = await _userManager.FindByNameAsync(model.UserName);
 
                 if (userExists != null)
-                    return StatusCode(StatusCodes.Status409Conflict, new Response { Status = StatusCodes.Status409Conflict, Message = "User already exists!" });
+                    return StatusCode(StatusCodes.Status409Conflict, new ResponseOutputModel { Status = StatusCodes.Status409Conflict, Message = "User already exists!" });
 
                 ApplicationUser user = new ApplicationUser()
                 {
@@ -134,7 +138,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
 
                 if (!await _roleManager.RoleExistsAsync(Roles.Admin))
                     await _roleManager.CreateAsync(new ApplicationRole() { Name = Roles.Admin });
@@ -157,15 +161,17 @@ namespace DarkAdminPanel.WebApi.Controllers
             var user = await _userManager.FindByNameAsync(userName);
 
             if (user != null)
-                return Ok(user);
+            {
+                var result = _mapper.Map<UserByNameGetOutputModel>(user);
+                return Ok(result);
+            }
 
             return NotFound();
-
         }
 
         [AuthorizeRoles(Roles.Admin,Roles.User)]
         [HttpPut("[action]")]
-        public async Task<IActionResult> ChangePassword([FromBody] AccountSettingModel model)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordInputModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
 
