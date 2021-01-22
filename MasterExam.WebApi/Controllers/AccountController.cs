@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using DarkAdminPanel.Business.Abstract;
 using DarkAdminPanel.Core.Concrete.Models;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels;
 using DarkAdminPanel.WebApi.Attributes;
@@ -26,23 +27,24 @@ namespace DarkAdminPanel.WebApi.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 RoleManager<ApplicationRole> roleManager,
                                 IConfiguration configuration,
-                                IMapper mapper)
+                                IMapper mapper,
+                                ITokenService tokenService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _configuration = configuration;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
         [AllowAnonymous]
-        [HttpPost("[action]")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginInputModel model)
         {
             if (ModelState.IsValid)
@@ -53,28 +55,29 @@ namespace DarkAdminPanel.WebApi.Controllers
                 {
                     var userRoles = await _userManager.GetRolesAsync(user);
 
-                    var authClaims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    };
+                    var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.UserName),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        };
 
                     foreach (var userRole in userRoles)
                     {
-                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                        claims.Add(new Claim(ClaimTypes.Role, userRole));
                     }
+                  
+                    var accessToken = _tokenService.GenerateAccessToken(claims);
+                    var refreshToken = _tokenService.GenerateRefreshToken();
+                    user.RefreshToken = refreshToken;
+                    user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(5);
 
-                    var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                    await _userManager.UpdateAsync(user);
 
-                    var token = new JwtSecurityToken(
-                        issuer: _configuration["JWT:ValidIssuer"],
-                        audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(3),
-                        claims: authClaims,
-                        signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
-
-                    return Ok(new JwtOutputModel { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = token.ValidTo });
+                    return Ok(new
+                    {
+                        Token = accessToken,
+                        RefreshToken = refreshToken
+                    });
                 }
 
                 return Unauthorized();
@@ -84,7 +87,7 @@ namespace DarkAdminPanel.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("[action]")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterInputModel model)
         {
             if (ModelState.IsValid)
@@ -118,7 +121,7 @@ namespace DarkAdminPanel.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("[action]")]
+        [HttpPost("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterInputModel model)
         {
             if (ModelState.IsValid)
@@ -154,8 +157,8 @@ namespace DarkAdminPanel.WebApi.Controllers
             return BadRequest();
         }
 
-        [AuthorizeRoles(Roles.Admin,Roles.User)]
-        [HttpGet("[action]/{userName}")]
+        [AuthorizeRoles(Roles.Admin, Roles.User)]
+        [HttpGet("getUserByName/{userName}")]
         public async Task<IActionResult> GetUserByName(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
@@ -169,8 +172,8 @@ namespace DarkAdminPanel.WebApi.Controllers
             return NotFound();
         }
 
-        [AuthorizeRoles(Roles.Admin,Roles.User)]
-        [HttpPut("[action]")]
+        [AuthorizeRoles(Roles.Admin, Roles.User)]
+        [HttpPut("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordInputModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
@@ -192,6 +195,5 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError, "Couldn't assign token");
         }
-
     }
 }

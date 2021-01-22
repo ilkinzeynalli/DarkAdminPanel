@@ -23,8 +23,6 @@ namespace DarkAdminPanel.WebUI.Extensions
 
             Configuration = builder.Build();
 
-            //int timeoutSec = 90;
-            //cl.Timeout = new TimeSpan(0, 0, timeoutSec);
             string baseUrl = Configuration["BaseUrl"];
             string contentType = "application/json";
             httpClient.BaseAddress = new Uri(baseUrl);

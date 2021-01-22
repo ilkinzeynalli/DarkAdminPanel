@@ -17,6 +17,8 @@ namespace DarkAdminPanel.WebUI.Modules
         public static void Load(IServiceCollection services)
         {
             services.AddHttpClient<IAccountApiClient, AccountApiClient>();
+            services.AddHttpClient<ITokenApiClient, TokenApiClient>();
+
         }
     }
 }

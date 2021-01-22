@@ -53,6 +53,9 @@ namespace MasterExam.WebApi
 
             //Adding Validator
             ValidatorModule.Load(services);
+
+            //Configure DI for application services
+            LogicModule.Load(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

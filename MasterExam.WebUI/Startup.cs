@@ -3,26 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using DarkAdminPanel.WebUI.ApiClients.Abstract;
-using DarkAdminPanel.WebUI.ApiClients.Concrete;
 using DarkAdminPanel.WebUI.Extensions;
 using DarkAdminPanel.WebUI.Mapping;
 using DarkAdminPanel.WebUI.Middlewares;
 using DarkAdminPanel.WebUI.Modules;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MasterExam.WebUI
 {
@@ -107,12 +99,6 @@ namespace MasterExam.WebUI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "AccountSetting",
-                    pattern: "Account/Setting/{userName}",
-                     defaults: new { Controller = "Account", Action = "Setting" }
-                    );
-
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{Controller}/{Action}/{id?}",

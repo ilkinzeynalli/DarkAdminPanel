@@ -26,42 +26,56 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 
         public async Task<HttpResponseMessage> GetUserByNameAsync(string userName)
         {
-             HttpResponseMessage response = await _client.AddHeader()
+            using (var httpClient = new HttpClient())
+            {
+                HttpResponseMessage response = await httpClient.AddHeader()
                                                          .AddTokenToHeader(_loginManager.Token)
                                                          .GetAsync("/api/Account/GetUserByName/" + userName);
 
-            return response;
+                return response;
+            }
+                
         }
         public async Task<HttpResponseMessage> LoginAsync(LoginInputModel model)
         {
-            string data = JsonConvert.SerializeObject(model);
-            var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+            using (var httpClient = new HttpClient())
+            {
+                string data = JsonConvert.SerializeObject(model);
+                var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _client.AddHeader().PostAsync("/api/Account/Login", contentData);
+                HttpResponseMessage response = await httpClient.AddHeader().PostAsync("/api/Account/Login", contentData);
 
-            return response;
+                return response;
+            }
         }
         public async Task<HttpResponseMessage> RegisterAsync(RegisterInputModel model)
         {
-            string data = JsonConvert.SerializeObject(model);
-            var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+            using (var httpClient = new HttpClient())
+            {
+                string data = JsonConvert.SerializeObject(model);
+                var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _client.AddHeader()
-                                                        .AddTokenToHeader(_loginManager.Token)
-                                                        .PostAsync("/api/Account/Register", contentData);
+                HttpResponseMessage response = await _client.AddHeader()
+                                                            .AddTokenToHeader(_loginManager.Token)
+                                                            .PostAsync("/api/Account/Register", contentData);
 
-            return response;
+                return response;
+            }
+            
         }
         public async Task<HttpResponseMessage> ChangePasswordAsync(ChangePasswordInputModel model)
         {
-            string data = JsonConvert.SerializeObject(model);
-            var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+            using (var httpClient = new HttpClient())
+            {
+                string data = JsonConvert.SerializeObject(model);
+                var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _client.AddHeader()
-                                                    .AddTokenToHeader(_loginManager.Token)
-                                                    .PutAsync("/api/Account/ChangePassword", contentData);
+                HttpResponseMessage response = await _client.AddHeader()
+                                                        .AddTokenToHeader(_loginManager.Token)
+                                                        .PutAsync("/api/Account/ChangePassword", contentData);
 
-            return response;
+                return response;
+            }
         }
 
     }

@@ -56,6 +56,7 @@ namespace DarkAdminPanel.WebUI.Controllers
                     case (int)HttpStatusCode.OK:
                         var jwt = JsonConvert.DeserializeObject<JwtOutputModel>(result);
                         _loginManager.Token = jwt.Token;
+                        _loginManager.RefreshToken = jwt.RefreshToken;
 
                         return Redirect(returnUrl ?? "/Home/Index");
 

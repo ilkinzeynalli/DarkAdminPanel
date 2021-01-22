@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DarkAdminPanel.WebUI.ResponseOutputModels
+namespace DarkAdminPanel.WebUI.Models.RequestInputModels
 {
-    public class JwtOutputModel
+    public class TokenApiInputModel
     {
-        public string Token { get; set; }
+        public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
     }
 }

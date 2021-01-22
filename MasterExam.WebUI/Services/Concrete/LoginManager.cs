@@ -30,11 +30,28 @@ namespace DarkAdminPanel.WebUI.Services.Concrete
                 }
             }
         }
+
+        public string RefreshToken
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext.Session.GetJson<string>("RefreshToken");
+            }
+            set
+            {
+                if (!String.IsNullOrEmpty(value))
+                {
+                    _httpContextAccessor.HttpContext.Session.SetJson("RefreshToken", value);
+                }
+            }
+        }
+
         public string UserName => _httpContextAccessor.HttpContext.User.Identity.Name;
 
         public void Logout()
         {
-            _httpContextAccessor.HttpContext.Session.SetJson("JWToken", null);
+            Token = null;
+            RefreshToken = null;
         }
     }
 }
