@@ -1,5 +1,5 @@
-﻿using DarkAdminPanel.Business.Abstract;
-using DarkAdminPanel.Business.Concrete;
+﻿using DarkAdminPanel.WebApi.Services.Abstract;
+using DarkAdminPanel.WebApi.Services.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

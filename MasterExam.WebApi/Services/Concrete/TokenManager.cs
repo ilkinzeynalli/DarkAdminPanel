@@ -1,4 +1,5 @@
-﻿using DarkAdminPanel.Business.Abstract;
+﻿using DarkAdminPanel.WebApi.Services.Abstract;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -8,22 +9,24 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 
-namespace DarkAdminPanel.Business.Concrete
+namespace DarkAdminPanel.WebApi.Services.Concrete
 {
     public class TokenManager : ITokenService
     {
-        private readonly string issuer = "http://localhost:61955";
-        private readonly string audience = "*";
-        private readonly string secrutiyKey = "ByYM000OLlMQG6VVVp1OH7Xzyr7gHuw1qvUC5dcGt3SNM";
-
+        private readonly IConfiguration _configration;
+        public TokenManager(IConfiguration configration)
+        {
+            _configration = configration;
+        }
+       
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secrutiyKey));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configration["JWT:Secret"]));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var tokeOptions = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
+                issuer: _configration["JWT:ValidIssuer"],
+                audience: _configration["JWT:ValidAudience"],
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(2),
                 signingCredentials: signinCredentials
@@ -82,9 +85,9 @@ namespace DarkAdminPanel.Business.Concrete
             {
                 ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
                 ValidateIssuer = false,
-                ValidateIssuerSigningKey = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secrutiyKey)),
-                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+                ValidateLifetime = false, //here we are saying that we don't care about the token's expiration date,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configration["JWT:Secret"])),
             };
         }
     }

@@ -17,13 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DarkAdminPanel.Business\DarkAdminPanel.Business.csproj" />
-    <ProjectReference Include="..\DarkAdminPanel.DataAccess\DarkAdminPanel.DataAccess.csproj" />
-    <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Entities.csproj" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <ProjectReference Include="..\DarkAdminPanel.Business\DarkAdminPanel.Business.csproj" />
+    <ProjectReference Include="..\DarkAdminPanel.DataAccess\DarkAdminPanel.DataAccess.csproj" />
+    <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Entities.csproj" />
   </ItemGroup>
 
 </Project>

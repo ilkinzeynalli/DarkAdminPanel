@@ -15,12 +15,10 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 {
     public class TokenApiClient : ITokenApiClient
     {
-        private readonly HttpClient _client;
         private readonly ILoginService _loginManager;
 
-        public TokenApiClient(HttpClient client, ILoginService loginManager)
+        public TokenApiClient( ILoginService loginManager)
         {
-            _client = client;
             _loginManager = loginManager;
         }
 

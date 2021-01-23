@@ -24,10 +24,7 @@ namespace DarkAdminPanel.WebUI.Services.Concrete
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    _httpContextAccessor.HttpContext.Session.SetJson("JWToken", value);
-                }
+                _httpContextAccessor.HttpContext.Session.SetJson("JWToken", value);
             }
         }
 
@@ -39,10 +36,7 @@ namespace DarkAdminPanel.WebUI.Services.Concrete
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    _httpContextAccessor.HttpContext.Session.SetJson("RefreshToken", value);
-                }
+                _httpContextAccessor.HttpContext.Session.SetJson("RefreshToken", value);
             }
         }
 

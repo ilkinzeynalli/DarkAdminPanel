@@ -16,11 +16,9 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
 {
     public class AccountApiClient : IAccountApiClient
     {
-        private readonly HttpClient _client;
         private readonly ILoginService _loginManager; 
-        public AccountApiClient(HttpClient client,ILoginService loginManager)
+        public AccountApiClient(ILoginService loginManager)
         {
-            _client = client;
             _loginManager = loginManager;
         }
 
@@ -55,7 +53,7 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
                 string data = JsonConvert.SerializeObject(model);
                 var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await _client.AddHeader()
+                HttpResponseMessage response = await httpClient.AddHeader()
                                                             .AddTokenToHeader(_loginManager.Token)
                                                             .PostAsync("/api/Account/Register", contentData);
 
@@ -70,7 +68,7 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
                 string data = JsonConvert.SerializeObject(model);
                 var contentData = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await _client.AddHeader()
+                HttpResponseMessage response = await httpClient.AddHeader()
                                                         .AddTokenToHeader(_loginManager.Token)
                                                         .PutAsync("/api/Account/ChangePassword", contentData);
 

@@ -1,6 +1,7 @@
 ﻿using DarkAdminPanel.WebUI.ApiClients.Abstract;
 using DarkAdminPanel.WebUI.Extensions;
 using DarkAdminPanel.WebUI.Models.RequestInputModels;
+using DarkAdminPanel.WebUI.Models.ResponseOutputModels;
 using DarkAdminPanel.WebUI.Services.Abstract;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -44,7 +45,7 @@ namespace DarkAdminPanel.WebUI.Middlewares
                     if (newTokensAsync.StatusCode != System.Net.HttpStatusCode.Unauthorized)
                     {
                         var newTokensResult = await newTokensAsync.Content.ReadAsStringAsync();
-                        var newTokens = JsonConvert.DeserializeObject<TokenApiInputModel>(newTokensResult);
+                        var newTokens = JsonConvert.DeserializeObject<TokenOutputModel>(newTokensResult);
 
                         _loginManager.Token = newTokens.AccessToken;
                         _loginManager.RefreshToken = newTokens.RefreshToken;

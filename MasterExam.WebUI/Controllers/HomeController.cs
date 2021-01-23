@@ -17,9 +17,6 @@ namespace DarkAdminPanel.WebUI.Controllers
         [AuthorizeRoles(Roles.Admin,Roles.User)]
         public IActionResult Index()
         {
-            //var token = HttpContext.Session.GetString("JWToken");
-            //var token2 = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            //var claim = token2.Claims.First(c => c.Type == ClaimTypes.Role).Value;
             return View();
         }
     }

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using DarkAdminPanel.Business.Abstract;
-using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels;
+using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
+using DarkAdminPanel.Entities.Concrete;
 using DarkAdminPanel.WebApi.Models.RequestInputModels;
+using DarkAdminPanel.WebApi.Models.ResponseOutputModels;
+using DarkAdminPanel.WebApi.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,18 +15,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DarkAdminPanel.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class TokenController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenService _tokenService;
-        public TokenController(UserManager<ApplicationUser> userManager,ITokenService tokenService)
+        private readonly ApplicationDbContext _context;
+
+        public TokenController(UserManager<ApplicationUser> userManager,ITokenService tokenService, ApplicationDbContext context)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _context = context;
         }
-       
+
+        [AllowAnonymous]
         [HttpPost]
         [Route("refresh")]
         public async Task<IActionResult> Refresh(TokenApiInputModel model)
@@ -42,26 +49,27 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             var user = await _userManager.FindByNameAsync(userName);
 
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            //Exist token find
+            var existToken = _context.ApplicationUserToken.FirstOrDefault(f => f.UserId == user.Id &&
+                                                f.Name == "RefreshToken");
+
+            if (user == null || existToken.Value != refreshToken || existToken.ExpireDate <= DateTime.Now)
             {
                 return Unauthorized("Refresh token expired");
             }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(5);
 
-            await _userManager.UpdateAsync(user);
+            existToken.Value = newRefreshToken;
+            existToken.ExpireDate = DateTime.Now.AddMinutes(5);
 
-            return new ObjectResult(new
-            {
-                accessToken = newAccessToken,
-                refreshToken = newRefreshToken
-            });
+            _context.SaveChanges();
+            
+            return Ok(new TokenApiOutputModel() { AccessToken = newAccessToken, RefreshToken = newRefreshToken });
         }
 
-        [HttpPost, Authorize]
+        [HttpPost]
         [Route("revoke")]
         public async Task<IActionResult> Revoke()
         {
@@ -70,13 +78,18 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             if (user == null) return BadRequest();
 
-            user.RefreshToken = null;
-            await _userManager.UpdateAsync(user);
+            //Exist token find
+            var existToken = _context.ApplicationUserToken.FirstOrDefault(f => f.UserId == user.Id &&
+                                                f.Name == "RefreshToken");
+            existToken.Value = null;
+            _context.SaveChanges();
 
             return NoContent();
         }
 
-        [HttpGet("validate")]
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("validate")]
         public async Task<IActionResult> Validate([FromQuery] string token)
         {
             var result = await Task.Run(() => _tokenService.ValidateToken(token));

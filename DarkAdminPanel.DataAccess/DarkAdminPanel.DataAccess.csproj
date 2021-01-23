@@ -7,7 +7,6 @@
   <ItemGroup>
     <Folder Include="Abstract\" />
     <Folder Include="Concrete\EntityFramework\Configurations\" />
-    <Folder Include="Concrete\EntityFramework\Migrations\" />
     <Folder Include="Concrete\EntityFramework\Repositories\" />
   </ItemGroup>
 

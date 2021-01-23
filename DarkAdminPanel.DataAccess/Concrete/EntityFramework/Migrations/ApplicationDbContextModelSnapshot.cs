@@ -4,16 +4,14 @@ using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
+namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210122071921_AddRefreshToken")]
-    partial class AddRefreshToken
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,7 +19,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationRole", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -48,7 +46,31 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationUser", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -90,12 +112,6 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -119,31 +135,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,7 +159,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -189,7 +181,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserRole", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -204,7 +196,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserToken", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -215,6 +207,9 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
@@ -223,55 +218,85 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Mirations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRoleClaim", b =>
                 {
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationRole", null)
-                        .WithMany()
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationRole", "Role")
+                        .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserClaim", b =>
                 {
-                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels.ApplicationUser", null)
-                        .WithMany()
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                        .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserLogin", b =>
+                {
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                        .WithMany("Logins")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserRole", b =>
+                {
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserToken", b =>
+                {
+                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                        .WithMany("Tokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRole", b =>
+                {
+                    b.Navigation("RoleClaims");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUser", b =>
+                {
+                    b.Navigation("Claims");
+
+                    b.Navigation("Logins");
+
+                    b.Navigation("Tokens");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

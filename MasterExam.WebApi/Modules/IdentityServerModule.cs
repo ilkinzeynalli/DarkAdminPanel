@@ -1,5 +1,5 @@
 ﻿using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
-using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels;
+using DarkAdminPanel.Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;

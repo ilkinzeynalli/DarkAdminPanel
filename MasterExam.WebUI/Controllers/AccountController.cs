@@ -25,7 +25,7 @@ namespace DarkAdminPanel.WebUI.Controllers
     {
         private readonly ILoginService _loginManager;
         private readonly IAccountApiClient _accountApiClient;
-        public readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public AccountController(IAccountApiClient accountApiClient, ILoginService loginManager, IMapper mapper)
         {

@@ -6,14 +6,15 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using DarkAdminPanel.Business.Abstract;
 using DarkAdminPanel.Core.Concrete.Models;
-using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IndentityModels;
+using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
+using DarkAdminPanel.Entities.Concrete;
 using DarkAdminPanel.WebApi.Attributes;
 using DarkAdminPanel.WebApi.FluentValidations;
 using DarkAdminPanel.WebApi.RequestInputModels;
 using DarkAdminPanel.WebApi.ResponseOutputModels;
 using DarkAdminPanel.WebApi.Routing;
+using DarkAdminPanel.WebApi.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DarkAdminPanel.WebApi.Controllers
 {
+    [AuthorizeRoles(Roles.Admin, Roles.User)]
     [ApiRoutePrefix("account")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -31,17 +33,21 @@ namespace DarkAdminPanel.WebApi.Controllers
         private readonly ITokenService _tokenService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly ApplicationDbContext _context;
+
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 RoleManager<ApplicationRole> roleManager,
                                 IConfiguration configuration,
                                 IMapper mapper,
-                                ITokenService tokenService)
+                                ITokenService tokenService,
+                                ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _mapper = mapper;
             _tokenService = tokenService;
+            _context = context;
         }
         [AllowAnonymous]
         [HttpPost("login")]
@@ -68,8 +74,18 @@ namespace DarkAdminPanel.WebApi.Controllers
                   
                     var accessToken = _tokenService.GenerateAccessToken(claims);
                     var refreshToken = _tokenService.GenerateRefreshToken();
-                    user.RefreshToken = refreshToken;
-                    user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(5);
+
+                    //refresh token add degisecem burayi kecici etmisem
+                    _context.ApplicationUserToken.Add(new ApplicationUserToken()
+                    {
+                        User = user,
+                        LoginProvider = "MyApp",
+                        Name = "RefreshToken",
+                        Value = refreshToken,
+                        ExpireDate = DateTime.Now.AddMinutes(5)
+                    });
+
+                    _context.SaveChanges();
 
                     await _userManager.UpdateAsync(user);
 
@@ -157,7 +173,6 @@ namespace DarkAdminPanel.WebApi.Controllers
             return BadRequest();
         }
 
-        [AuthorizeRoles(Roles.Admin, Roles.User)]
         [HttpGet("getUserByName/{userName}")]
         public async Task<IActionResult> GetUserByName(string userName)
         {
@@ -172,7 +187,6 @@ namespace DarkAdminPanel.WebApi.Controllers
             return NotFound();
         }
 
-        [AuthorizeRoles(Roles.Admin, Roles.User)]
         [HttpPut("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordInputModel model)
         {

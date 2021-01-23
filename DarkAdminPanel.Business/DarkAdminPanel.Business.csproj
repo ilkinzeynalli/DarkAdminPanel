@@ -9,4 +9,14 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstract\" />
+    <Folder Include="Concrete\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DarkAdminPanel.DataAccess\DarkAdminPanel.DataAccess.csproj" />
+    <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
