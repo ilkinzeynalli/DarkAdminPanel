@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DarkAdminPanel.Entities.Concrete;
+using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels;
 using DarkAdminPanel.WebApi.ResponseOutputModels;
 using System;
 using System.Collections.Generic;

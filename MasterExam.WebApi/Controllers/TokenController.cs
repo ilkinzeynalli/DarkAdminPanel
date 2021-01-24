@@ -4,7 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
-using DarkAdminPanel.Entities.Concrete;
+using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels;
+using DarkAdminPanel.WebApi.Extensions;
+using DarkAdminPanel.WebApi.Models;
 using DarkAdminPanel.WebApi.Models.RequestInputModels;
 using DarkAdminPanel.WebApi.Models.ResponseOutputModels;
 using DarkAdminPanel.WebApi.Services.Abstract;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DarkAdminPanel.WebApi.Controllers
 {
@@ -49,11 +52,13 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             var user = await _userManager.FindByNameAsync(userName);
 
-            //Exist token find
-            var existToken = _context.ApplicationUserToken.FirstOrDefault(f => f.UserId == user.Id &&
-                                                f.Name == "RefreshToken");
+            //Exist tokens find
+            var existTokens = await _context.ApplicationUserToken.Where(f => f.UserId == user.Id).ToListAsync();
 
-            if (user == null || existToken.Value != refreshToken || existToken.ExpireDate <= DateTime.Now)
+            var existAccessToken = existTokens.FirstOrDefault(f => f.Name == TokenTypes.AccessToken);
+            var existRefreshToken = existTokens.FirstOrDefault(f => f.Name == TokenTypes.RefreshToken);
+
+            if (user == null || existRefreshToken.Value != refreshToken || existRefreshToken.ExpireDate <= DateTime.Now)
             {
                 return Unauthorized("Refresh token expired");
             }
@@ -61,8 +66,12 @@ namespace DarkAdminPanel.WebApi.Controllers
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-            existToken.Value = newRefreshToken;
-            existToken.ExpireDate = DateTime.Now.AddMinutes(5);
+
+            existAccessToken.Value = newAccessToken;
+            existAccessToken.ExpireDate = new JwtSecurityToken(newAccessToken).ValidTo.ConvertUtcToLocalTime();
+
+            existRefreshToken.Value = newRefreshToken;
+            existRefreshToken.ExpireDate = DateTime.Now.AddMinutes(5);
 
             _context.SaveChanges();
             
@@ -80,7 +89,7 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             //Exist token find
             var existToken = _context.ApplicationUserToken.FirstOrDefault(f => f.UserId == user.Id &&
-                                                f.Name == "RefreshToken");
+                                                f.Name == TokenTypes.RefreshToken);
             existToken.Value = null;
             _context.SaveChanges();
 

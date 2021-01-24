@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DarkAdminPanel.Business\DarkAdminPanel.Business.csproj" />
     <ProjectReference Include="..\DarkAdminPanel.DataAccess\DarkAdminPanel.DataAccess.csproj" />
     <ProjectReference Include="..\MasterExam.Entities\DarkAdminPanel.Entities.csproj" />

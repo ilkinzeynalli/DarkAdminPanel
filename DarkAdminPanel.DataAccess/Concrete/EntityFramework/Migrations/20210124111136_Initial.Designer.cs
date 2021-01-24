@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210123134328_Init")]
-    partial class Init
+    [Migration("20210124111136_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRole", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -48,7 +48,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetRoleClaims");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUser", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -137,7 +137,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserClaim", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,7 +161,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserLogin", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -183,7 +183,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserRole", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserRole", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -198,7 +198,7 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserToken", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserToken", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -220,9 +220,9 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRoleClaim", b =>
                 {
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationRole", "Role")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRole", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -231,9 +231,9 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserClaim", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserClaim", b =>
                 {
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", "User")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -242,9 +242,9 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserLogin", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserLogin", b =>
                 {
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", "User")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -253,15 +253,15 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserRole", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserRole", b =>
                 {
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationRole", "Role")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -272,9 +272,9 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUserToken", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUserToken", b =>
                 {
-                    b.HasOne("DarkAdminPanel.Entities.Concrete.ApplicationUser", "User")
+                    b.HasOne("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", "User")
                         .WithMany("Tokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -283,14 +283,14 @@ namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationRole", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationRole", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("DarkAdminPanel.Entities.Concrete.ApplicationUser", b =>
+            modelBuilder.Entity("DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels.ApplicationUser", b =>
                 {
                     b.Navigation("Claims");
 

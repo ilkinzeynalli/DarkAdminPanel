@@ -1,4 +1,5 @@
-﻿using DarkAdminPanel.WebApi.Services.Abstract;
+﻿using DarkAdminPanel.WebApi.Extensions;
+using DarkAdminPanel.WebApi.Services.Abstract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -76,7 +77,7 @@ namespace DarkAdminPanel.WebApi.Services.Concrete
                 return false;
             }
 
-            return validatedToken != null && ((jwtToken != null) && (jwtToken.ValidTo >= DateTime.UtcNow));
+            return validatedToken != null && ((jwtToken != null) && (jwtToken.ValidTo.ConvertUtcToLocalTime() >= DateTime.Now));
         }
 
         private TokenValidationParameters GetValidationParameters()

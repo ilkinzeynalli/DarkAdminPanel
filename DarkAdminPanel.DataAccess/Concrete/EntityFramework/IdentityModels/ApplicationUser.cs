@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkAdminPanel.Entities.Concrete
+namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels
 {
     public class ApplicationUser : IdentityUser
     {

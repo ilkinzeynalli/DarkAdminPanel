@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkAdminPanel.Entities.Concrete
+namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels
 {
-    public class ApplicationUserLogin : IdentityUserLogin<string>
+    public class ApplicationUserClaim : IdentityUserClaim<string>
     {
         public virtual ApplicationUser User { get; set; }
     }

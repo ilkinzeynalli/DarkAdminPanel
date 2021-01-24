@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DarkAdminPanel.Entities.Concrete
-{
+namespace DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels
+{ 
     public class ApplicationUserToken :IdentityUserToken<string>
     {
         public DateTime ExpireDate { get; set; }

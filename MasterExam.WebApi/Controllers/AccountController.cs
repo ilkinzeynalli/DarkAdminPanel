@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DarkAdminPanel.Core.Concrete.Models;
 using DarkAdminPanel.DataAccess.Concrete.EntityFramework.Contexts;
-using DarkAdminPanel.Entities.Concrete;
+using DarkAdminPanel.DataAccess.Concrete.EntityFramework.IdentityModels;
 using DarkAdminPanel.WebApi.Attributes;
 using DarkAdminPanel.WebApi.FluentValidations;
 using DarkAdminPanel.WebApi.RequestInputModels;
@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using DarkAdminPanel.WebApi.Models;
+using DarkAdminPanel.WebApi.Extensions;
 
 namespace DarkAdminPanel.WebApi.Controllers
 {
@@ -38,7 +40,6 @@ namespace DarkAdminPanel.WebApi.Controllers
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 RoleManager<ApplicationRole> roleManager,
-                                IConfiguration configuration,
                                 IMapper mapper,
                                 ITokenService tokenService,
                                 ApplicationDbContext context)
@@ -73,17 +74,19 @@ namespace DarkAdminPanel.WebApi.Controllers
                     }
                   
                     var accessToken = _tokenService.GenerateAccessToken(claims);
+                    var accessTokeExpireDate = new JwtSecurityToken(accessToken).ValidTo.ConvertUtcToLocalTime();
+
                     var refreshToken = _tokenService.GenerateRefreshToken();
+                    var refreshTokenExpireDate = DateTime.Now.AddMinutes(5);
 
                     //refresh token add degisecem burayi kecici etmisem
-                    _context.ApplicationUserToken.Add(new ApplicationUserToken()
+                    var tokens = new List<ApplicationUserToken>()
                     {
-                        User = user,
-                        LoginProvider = "MyApp",
-                        Name = "RefreshToken",
-                        Value = refreshToken,
-                        ExpireDate = DateTime.Now.AddMinutes(5)
-                    });
+                        new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.AccessToken ,Value = accessToken,ExpireDate = accessTokeExpireDate},
+                        new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.RefreshToken,Value = refreshToken,ExpireDate = refreshTokenExpireDate}
+                    };
+
+                    _context.ApplicationUserToken.AddRange(tokens);
 
                     _context.SaveChanges();
 
