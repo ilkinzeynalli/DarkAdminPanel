@@ -35,8 +35,7 @@ namespace DarkAdminPanel.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        [Route("refresh")]
+        [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(TokenApiInputModel model)
         {
             if (model is null)
@@ -78,8 +77,7 @@ namespace DarkAdminPanel.WebApi.Controllers
             return Ok(new TokenApiOutputModel() { AccessToken = newAccessToken, RefreshToken = newRefreshToken });
         }
 
-        [HttpPost]
-        [Route("revoke")]
+        [HttpPost("revoke")]
         public async Task<IActionResult> Revoke()
         {
             var userName = User.Identity.Name;
@@ -97,8 +95,7 @@ namespace DarkAdminPanel.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        [Route("validate")]
+        [HttpGet("validate")]
         public async Task<IActionResult> Validate([FromQuery] string token)
         {
             var result = await Task.Run(() => _tokenService.ValidateToken(token));

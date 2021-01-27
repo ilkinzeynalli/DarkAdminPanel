@@ -16,9 +16,12 @@ namespace DarkAdminPanel.WebUI.RequestInputModels
         public string Email { get; set; }
 
         [UIHint("password")]
+        [Required(ErrorMessage = "Passwordu daxil edin")]
         public string Password { get; set; }
 
         [UIHint("password")]
+        [Required(ErrorMessage = "ConfirmPassword daxil edin")]
+        [Compare(nameof(Password),ErrorMessage = "Passwordlar uygun gelmir")]
         public string ConfirmPassword { get; set; }
     }
 }

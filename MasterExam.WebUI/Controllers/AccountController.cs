@@ -119,7 +119,7 @@ namespace DarkAdminPanel.WebUI.Controllers
                     case (int)HttpStatusCode.Conflict:
                     case (int)HttpStatusCode.InternalServerError:
                         var errors = JsonConvert.DeserializeObject<ResponseOutputModel>(result);
-                        ModelState.AddModelError("", errors.Message);
+                        ModelState.AddModelError("Confilict", errors.Message);
                         break;
 
                 }

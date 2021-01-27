@@ -75,7 +75,6 @@ namespace DarkAdminPanel.WebApi.Controllers
                   
                     var accessToken = _tokenService.GenerateAccessToken(claims);
                     var accessTokeExpireDate = new JwtSecurityToken(accessToken).ValidTo.ConvertUtcToLocalTime();
-
                     var refreshToken = _tokenService.GenerateRefreshToken();
                     var refreshTokenExpireDate = DateTime.Now.AddMinutes(5);
 
@@ -87,10 +86,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                     };
 
                     _context.ApplicationUserToken.AddRange(tokens);
-
                     _context.SaveChanges();
-
-                    await _userManager.UpdateAsync(user);
 
                     return Ok(new
                     {
@@ -111,11 +107,6 @@ namespace DarkAdminPanel.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userExists = await _userManager.FindByEmailAsync(model.Email);
-
-                if (userExists != null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User already exists!" });
-
                 ApplicationUser user = new ApplicationUser()
                 {
                     UserName = model.UserName,
@@ -125,7 +116,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = result.Errors.Select(s => s.Description).FirstOrDefault() });
 
                 if (!await _roleManager.RoleExistsAsync(Roles.User))
                     await _roleManager.CreateAsync(new ApplicationRole { Name = Roles.User });
@@ -145,11 +136,6 @@ namespace DarkAdminPanel.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userExists = await _userManager.FindByNameAsync(model.UserName);
-
-                if (userExists != null)
-                    return StatusCode(StatusCodes.Status409Conflict, new ResponseOutputModel { Status = StatusCodes.Status409Conflict, Message = "User already exists!" });
-
                 ApplicationUser user = new ApplicationUser()
                 {
                     UserName = model.UserName,
@@ -160,7 +146,7 @@ namespace DarkAdminPanel.WebApi.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = result.Errors.Select(s => s.Description).FirstOrDefault() });
 
                 if (!await _roleManager.RoleExistsAsync(Roles.Admin))
                     await _roleManager.CreateAsync(new ApplicationRole() { Name = Roles.Admin });
@@ -196,7 +182,7 @@ namespace DarkAdminPanel.WebApi.Controllers
             var user = await _userManager.FindByIdAsync(model.UserId);
 
             if (user == null)
-                return NotFound("User not found");
+                return NotFound("Istifadeci tapilmadi");
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -207,10 +193,10 @@ namespace DarkAdminPanel.WebApi.Controllers
                 if (result.Succeeded)
                     return Ok();
                 else
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Password was not reset successfully");
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError ,Message = "Şifrə sıfırlanmadı.Şifrənizi kontrol edin" } );
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Couldn't assign token");
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseOutputModel { Status = StatusCodes.Status500InternalServerError, Message = "Couldn't assign token" } );
         }
     }
 }

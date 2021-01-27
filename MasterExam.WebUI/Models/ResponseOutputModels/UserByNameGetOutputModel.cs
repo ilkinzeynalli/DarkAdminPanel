@@ -9,10 +9,8 @@ namespace DarkAdminPanel.WebUI.ResponseOutputModels
     {
         public string UserId { get; set; }
 
-        [UIHint("email")]
         public string UserName { get; set; }
 
-        [UIHint("email")]
         public string Email { get; set; }
     }
 }

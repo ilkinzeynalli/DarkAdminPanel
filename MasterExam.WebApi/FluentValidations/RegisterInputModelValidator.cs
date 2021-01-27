@@ -13,7 +13,7 @@ namespace DarkAdminPanel.WebApi.FluentValidations
         {
             RuleFor(p => p.UserName).NotNull().WithMessage("User Name daxil edin");
             RuleFor(p => p.UserName).NotEmpty().WithMessage("User Name daxil edin");
-            RuleFor(p => p.UserName).EmailAddress().WithMessage("Kecerli User Name daxil edin");
+            RuleFor(p => p.UserName).EmailAddress().WithMessage("Istifadeci adini email formatinda daxil edin");
 
             RuleFor(p => p.Password).NotNull().WithMessage("Password daxil edin");
             RuleFor(p => p.Password).NotEmpty().WithMessage("Password daxil edin");
