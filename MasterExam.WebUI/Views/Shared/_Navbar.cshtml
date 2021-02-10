@@ -74,14 +74,18 @@
                         <li class="nav-link">
                             <a asp-controller="Account" asp-action="ChangePassword" class="nav-item dropdown-item">Şifrəni dəyiş</a>
                         </li>
+                        <li class="nav-link">
+                            <form asp-controller="Account" asp-action="Lock" method="get">
+                                <button class="nav-item dropdown-item">Kilitlə</button>
+                            </form>
+                        </li>
                         <li class="dropdown-divider"></li>
                         <li class="nav-link">
                             <form asp-controller="Account" asp-action="Logout" method="get">
-                                @Html.AntiForgeryToken()
                                 <button class="nav-item dropdown-item">Çıxış et</button>
                             </form>
-                        </li>   
-                        
+                        </li>
+
                     </ul>
                 </li>
                 <li class="separator d-lg-none">  </li>

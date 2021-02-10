@@ -38,11 +38,15 @@ namespace DarkAdminPanel.WebUI.Controllers
         public IActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
+
+            //Eger login olmusa istifadeci login ekranina geldigi zaman logut et
+            if (_loginManager.Token != null)
+                _loginManager.Logout();
+
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string returnUrl)
         {
             if (ModelState.IsValid)
@@ -81,6 +85,7 @@ namespace DarkAdminPanel.WebUI.Controllers
             return View(model);
         }
 
+
         [HttpGet]
         public IActionResult Logout()
         {
@@ -89,13 +94,22 @@ namespace DarkAdminPanel.WebUI.Controllers
         }
 
         [HttpGet]
+        public IActionResult Lock()
+        {
+            ViewBag.Email = _loginManager.UserName;
+            _loginManager.Logout();
+            return View();
+        }
+
+
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken()]
         public async Task<IActionResult> Register(RegisterInputModel model)
         {
             if (ModelState.IsValid)
@@ -128,6 +142,7 @@ namespace DarkAdminPanel.WebUI.Controllers
             return View(model);
         }
 
+
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
         {
@@ -148,6 +163,7 @@ namespace DarkAdminPanel.WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordInputModel model)
         {
             if (ModelState.IsValid)
@@ -161,7 +177,7 @@ namespace DarkAdminPanel.WebUI.Controllers
                 {
                     case (int)HttpStatusCode.OK:
                         TempData["Message"] = "Şifrə başarıyla dəyişdirildi...!";
-                        return RedirectToAction("Logout", "Account");
+                        return RedirectToAction("Logout");
 
                     case (int)HttpStatusCode.BadRequest:
                         var badRequest = JsonConvert.DeserializeObject<BadRequest>(result);
@@ -181,5 +197,6 @@ namespace DarkAdminPanel.WebUI.Controllers
 
             return View(model);
         }
+
     }
 }
