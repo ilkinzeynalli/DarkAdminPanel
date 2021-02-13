@@ -49,5 +49,17 @@ namespace DarkAdminPanel.WebUI.ApiClients.Concrete
            
 
         }
+
+        public async Task<HttpResponseMessage> RevokeAsync()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                HttpResponseMessage response = await httpClient.AddHeader()
+                                                               .AddTokenToHeader(_loginManager.Token)
+                                                               .PostAsync("api/token/revoke",new StringContent("application/json"));
+
+                return response;
+            }
+        }
     }
 }

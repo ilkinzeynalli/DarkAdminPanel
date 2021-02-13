@@ -35,17 +35,20 @@ namespace DarkAdminPanel.WebApi.Controllers
         private readonly ITokenService _tokenService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
 
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 RoleManager<ApplicationRole> roleManager,
+                                SignInManager<ApplicationUser> signInManager,
                                 IMapper mapper,
                                 ITokenService tokenService,
                                 ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
             _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
@@ -57,45 +60,54 @@ namespace DarkAdminPanel.WebApi.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-
-                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+                if (user != null )
                 {
-                    var userRoles = await _userManager.GetRolesAsync(user);
+                    await _signInManager.SignOutAsync();
 
-                    var claims = new List<Claim>
+                    var signInResult =await _signInManager.PasswordSignInAsync(user, model.Password,false,false);
+
+                    if (signInResult.Succeeded)
+                    {
+                        var userRoles = await _userManager.GetRolesAsync(user);
+
+                        var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, user.UserName),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         };
 
-                    foreach (var userRole in userRoles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, userRole));
+                        foreach (var userRole in userRoles)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, userRole));
+                        }
+
+                        var accessToken = _tokenService.GenerateAccessToken(claims);
+                        var accessTokeExpireDate = new JwtSecurityToken(accessToken).ValidTo.ConvertUtcToLocalTime();
+                        var refreshToken = _tokenService.GenerateRefreshToken();
+                        var refreshTokenExpireDate = DateTime.Now.AddMinutes(5);
+
+                        //refresh token add degisecem burayi kecici etmisem
+                        var tokens = new List<ApplicationUserToken>()
+                        {
+                            new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.AccessToken ,Value = accessToken,ExpireDate = accessTokeExpireDate},
+                            new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.RefreshToken,Value = refreshToken,ExpireDate = refreshTokenExpireDate}
+                        };
+
+                        _context.ApplicationUserToken.AddRange(tokens);
+                        _context.SaveChanges();
+
+                        return Ok(new
+                        {
+                            Token = accessToken,
+                            RefreshToken = refreshToken
+                        });
                     }
-                  
-                    var accessToken = _tokenService.GenerateAccessToken(claims);
-                    var accessTokeExpireDate = new JwtSecurityToken(accessToken).ValidTo.ConvertUtcToLocalTime();
-                    var refreshToken = _tokenService.GenerateRefreshToken();
-                    var refreshTokenExpireDate = DateTime.Now.AddMinutes(5);
 
-                    //refresh token add degisecem burayi kecici etmisem
-                    var tokens = new List<ApplicationUserToken>()
-                    {
-                        new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.AccessToken ,Value = accessToken,ExpireDate = accessTokeExpireDate},
-                        new ApplicationUserToken(){ User = user,LoginProvider = "MyApp",Name = TokenTypes.RefreshToken,Value = refreshToken,ExpireDate = refreshTokenExpireDate}
-                    };
+                    return Unauthorized();
 
-                    _context.ApplicationUserToken.AddRange(tokens);
-                    _context.SaveChanges();
-
-                    return Ok(new
-                    {
-                        Token = accessToken,
-                        RefreshToken = refreshToken
-                    });
                 }
 
-                return Unauthorized();
+                return NotFound("User not found");
             }
 
             return BadRequest();

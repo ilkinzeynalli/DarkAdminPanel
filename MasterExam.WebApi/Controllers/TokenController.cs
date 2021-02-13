@@ -9,6 +9,7 @@ using DarkAdminPanel.WebApi.Extensions;
 using DarkAdminPanel.WebApi.Models;
 using DarkAdminPanel.WebApi.Models.RequestInputModels;
 using DarkAdminPanel.WebApi.Models.ResponseOutputModels;
+using DarkAdminPanel.WebApi.Routing;
 using DarkAdminPanel.WebApi.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkAdminPanel.WebApi.Controllers
 {
-    [Authorize]
+    
     [ApiController]
-    [Route("api/[controller]")]
+    [ApiRoutePrefix("token")]
     public class TokenController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -77,6 +78,7 @@ namespace DarkAdminPanel.WebApi.Controllers
             return Ok(new TokenApiOutputModel() { AccessToken = newAccessToken, RefreshToken = newRefreshToken });
         }
 
+        [Authorize]
         [HttpPost("revoke")]
         public async Task<IActionResult> Revoke()
         {
@@ -85,13 +87,21 @@ namespace DarkAdminPanel.WebApi.Controllers
 
             if (user == null) return BadRequest();
 
-            //Exist token find
-            var existToken = _context.ApplicationUserToken.FirstOrDefault(f => f.UserId == user.Id &&
-                                                f.Name == TokenTypes.RefreshToken);
-            existToken.Value = null;
+            //Exist tokens find
+            var existTokens = _context.ApplicationUserToken.Where(f => f.UserId == user.Id &&
+                                                (f.Name == TokenTypes.AccessToken || f.Name == TokenTypes.RefreshToken));
+            if (existTokens != null)
+            {
+                foreach (var existToken in existTokens)
+                {
+                    existToken.Value = null;
+                    existToken.ExpireDate = new DateTime(1900,1,1);
+                }
+            }
+          
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok("Tokens revoked");
         }
 
         [AllowAnonymous]

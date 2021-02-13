@@ -13,5 +13,6 @@ namespace DarkAdminPanel.WebUI.ApiClients.Abstract
         Task<HttpResponseMessage> RegisterAsync(RegisterInputModel model);
         Task<HttpResponseMessage> GetUserByNameAsync(string userEmail);
         Task<HttpResponseMessage> ChangePasswordAsync(ChangePasswordInputModel model);
+        
     }
 }

@@ -75,21 +75,21 @@ namespace MasterExam.WebUI
 
             //Add StatusCode Page middleware
             app.UseStatusCodePages();
-            //app.UseStatusCodePages(async context =>
-            //            {
-            //                var request =  context.HttpContext.Request;
-            //                var response = context.HttpContext.Response;
+            app.UseStatusCodePages(async context =>
+                        {
+                            var request = context.HttpContext.Request;
+                            var response = context.HttpContext.Response;
 
-            //                if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
-            //                    response.StatusCode == (int)HttpStatusCode.Forbidden)
-            //                {
-            //                    var returnUrl = String.Format("/{0}/{1}", request.RouteValues["controller"], request.RouteValues["action"]);
+                            if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
+                                response.StatusCode == (int)HttpStatusCode.Forbidden)
+                            {
+                                var returnUrl = String.Format("/{0}/{1}", request.RouteValues["controller"], request.RouteValues["action"]);
 
-            //                    context.HttpContext.Session.SetJson("JWToken", null);
-            //                    response.Redirect("/Account/Login?ReturnUrl=" + returnUrl);
-            //                }
-            //            }
-            //);
+                                context.HttpContext.Session.SetJson("JWToken", null);
+                                response.Redirect("/Account/Login?ReturnUrl=" + returnUrl);
+                            }
+                        }
+            );
 
             app.UseRouting();
 

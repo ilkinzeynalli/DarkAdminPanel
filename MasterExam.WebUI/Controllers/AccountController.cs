@@ -25,11 +25,14 @@ namespace DarkAdminPanel.WebUI.Controllers
     {
         private readonly ILoginService _loginManager;
         private readonly IAccountApiClient _accountApiClient;
+        private readonly ITokenApiClient _tokenApiClient;
         private readonly IMapper _mapper;
 
-        public AccountController(IAccountApiClient accountApiClient, ILoginService loginManager, IMapper mapper)
+        public AccountController(IAccountApiClient accountApiClient, ITokenApiClient tokenApiClient, ILoginService loginManager, IMapper mapper)
         {
             _accountApiClient = accountApiClient;
+            _tokenApiClient = tokenApiClient;
+
             _loginManager = loginManager;
             _mapper = mapper;
         }
@@ -87,10 +90,19 @@ namespace DarkAdminPanel.WebUI.Controllers
 
 
         [HttpGet]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            _loginManager.Logout();
-            return RedirectToAction("Login", "Account");
+           var response = await _tokenApiClient.RevokeAsync();
+
+            switch ((int)response.StatusCode)
+            {
+                case (int)HttpStatusCode.OK:
+                    _loginManager.Logout();
+                    return RedirectToAction("Login", "Account");
+            }
+
+            return BadRequest();
+           
         }
 
         [HttpGet]

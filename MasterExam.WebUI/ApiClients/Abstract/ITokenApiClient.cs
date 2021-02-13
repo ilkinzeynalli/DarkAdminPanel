@@ -11,6 +11,6 @@ namespace DarkAdminPanel.WebUI.ApiClients.Abstract
     {
         Task<HttpResponseMessage> ValidateAsync(string token);
         Task<HttpResponseMessage> RefreshAsync(TokenApiInputModel model);
-
+        Task<HttpResponseMessage> RevokeAsync();
     }
 }
