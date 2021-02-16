@@ -76,12 +76,12 @@
                 <li class="adjustments-line">
                     <div class="togglebutton switch-sidebar-mini">
                         <span class="label-switch">OFF</span>
-                        <input type="checkbox" name="checkbox" checked class="bootstrap-switch" data-on-label="" data-off-label="" />
+                        <input id="checkBoxSidebarMenu" type="checkbox" name="checkbox" checked class="bootstrap-switch" data-on-label="" data-off-label="" />
                         <span class="label-switch label-right">ON</span>
                     </div>
                     <div class="togglebutton switch-change-color mt-3">
                         <span class="label-switch">LIGHT MODE</span>
-                        <input id="changeTemp" type="checkbox" name="checkbox" checked class="bootstrap-switch" data-on-label="" data-off-label="" />
+                        <input id="checkBoxSidebarTheme" type="checkbox" name="checkbox" checked class="bootstrap-switch" data-on-label="" data-off-label="" />
                         <span class="label-switch label-right">DARK MODE</span>
                     </div>
                 </li>
@@ -95,7 +95,6 @@
     </div>
     <!--   Core JS Files   -->
     <script src="~/assets/js/core/jquery.min.js"></script>
-
     <!--Custom scripts-->
     <script src="~/js/customScript.js" asp-append-version="true"></script>
 
@@ -167,16 +166,16 @@
                 $sidebar = $('.sidebar');
                 $navbar = $('.navbar');
                 $main_panel = $('.main-panel');
-
                 $full_page = $('.full-page');
-
                 $sidebar_responsive = $('body > .navbar-collapse');
+
                 sidebar_mini_active = true;
                 white_color = false;
 
                 window_width = $(window).width();
 
                 fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
 
 
 
@@ -211,6 +210,8 @@
                     if ($sidebar_responsive.length != 0) {
                         $sidebar_responsive.attr('data', new_color);
                     }
+
+                    localStorage.setItem("newColor", new_color);
                 });
 
                 $('.switch-sidebar-mini input').on("switchChange.bootstrapSwitch", function () {
@@ -220,10 +221,12 @@
                         $('body').removeClass('sidebar-mini');
                         sidebar_mini_active = false;
                         blackDashboard.showSidebarMessage('Sidebar mini deactivated...');
+                        localStorage.setItem("sidebarMini", "");
                     } else {
                         $('body').addClass('sidebar-mini');
                         sidebar_mini_active = true;
                         blackDashboard.showSidebarMessage('Sidebar mini activated...');
+                        localStorage.setItem("sidebarMini", "sidebar-mini");
                     }
 
                     // we simulate the window Resize so the charts will get updated in realtime.
@@ -247,7 +250,9 @@
                             $('body').removeClass('change-background');
                             $('body').removeClass('white-content');
                         }, 900);
+
                         white_color = false;
+                        localStorage.setItem("white-content", '');
                     } else {
 
                         $('body').addClass('change-background');
@@ -257,8 +262,8 @@
                         }, 900);
 
                         white_color = true;
+                        localStorage.setItem("white-content", 'white-content');
                     }
-
 
                 });
 

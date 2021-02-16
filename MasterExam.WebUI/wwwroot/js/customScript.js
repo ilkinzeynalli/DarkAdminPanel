@@ -1,42 +1,18 @@
-﻿let backGroundColor = localStorage.getItem("backGroundColor");
-let sidebarColor = localStorage.getItem("sidebarColor");
+﻿let whiteContent = localStorage.getItem("white-content");
+let new_color = localStorage.getItem("newColor");
+let sidebarMini = localStorage.getItem("sidebarMini");
 
-$('body').addClass(backGroundColor);
-$(".sidebar").attr('data', sidebarColor);
-$(".sidebar").attr('data-color', sidebarColor);
-$("div.main-panel.ps").attr('data', sidebarColor);
+$sidebar = $('.sidebar');
+$navbar = $('.navbar');
+$main_panel = $('.main-panel');
+$full_page = $('.full-page');
+$sidebar_responsive = $('body > .navbar-collapse');
 
-$("span.light-badge").on("click", function () {
-    localStorage.setItem("backGroundColor", "white-content");
-});
+$sidebar.attr('data', new_color);
+$main_panel.attr('data', new_color);
+$full_page.attr('filter-color', new_color);
+$sidebar_responsive.attr('data', new_color);
 
-$("span.dark-badge").on("click", function () {
-    localStorage.setItem("backGroundColor", "");
-});
-
-$("span.badge.filter.badge-primary").on("click", function () {
-    localStorage.setItem("sidebarColor", "primary");
-});
-
-$("span.badge.filter.badge-info").on("click", function () {
-    localStorage.setItem("sidebarColor", "blue");
-});
-
-$("span.badge.filter.badge-success").on("click", function () {
-    localStorage.setItem("sidebarColor", "green");
-});
-
-$("span.badge.filter.badge-warning").on("click", function () {
-    localStorage.setItem("sidebarColor", "orange");
-});
-
-$("span.badge.filter.badge-danger").on("click", function () {
-    localStorage.setItem("sidebarColor", "red");
-});
-
-$('#changeTemp').on('switchChange.bootstrapSwitch', function (event, state) {
-    if (state) 
-        localStorage.setItem("backGroundColor", "");
-    else 
-        localStorage.setItem("backGroundColor", "white-content");
-});
+$('body').removeClass();
+$('body').addClass(whiteContent);
+$('body').addClass(sidebarMini);
