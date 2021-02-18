@@ -9,3 +9,47 @@ select.input-validation-error
 form div>ul>li {
     color: red;
 }
+
+/* The heart of the matter */
+.testimonial-group > .row {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.testimonial-group > .row > .col-3 {
+    display: inline-block;
+}
+
+.col-3 {
+    max-width: 27% !important;
+}
+
+/*Scroll bar*/
+
+/* Works on Firefox */
+*{
+    scrollbar-width: thin;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    background-color: white;
+    width: 10px;
+    height: 10px;
+}
+
+
+*::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 10px;
+    border: 0px solid orange;
+}
+
+.modul .card {
+    cursor: pointer;
+    height: 140px;
+}
+.card.active {
+    background: linear-gradient( 0deg,#2D4E89,#00f2c3);
+}
