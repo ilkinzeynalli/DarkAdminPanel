@@ -40,16 +40,30 @@ form div>ul>li {
 }
 
 
-*::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 10px;
-    border: 0px solid orange;
-}
+    *::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        border-radius: 10px;
+        border: 0px solid orange;
+    }
 
 .modul .card {
     cursor: pointer;
     height: 140px;
 }
+
+/*
 .card.active {
-    background: linear-gradient( 0deg,#2D4E89,#00f2c3);
+    background-color:steelblue;
+}*/
+/*
+.btn-primary {
+    background: linear-gradient( 0deg,#0098f0,#00f2c3);
 }
+
+.button:hover {
+    background: #00f2c3;
+}
+
+.checkbox {
+    background: linear-gradient( 0deg,#0098f0,#00f2c3);
+}*/
