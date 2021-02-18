@@ -68,6 +68,8 @@ namespace DarkAdminPanel.WebApi.Controllers
 
                     if (signInResult.Succeeded)
                     {
+                        await _userManager.ResetAccessFailedCountAsync(user); 
+
                         var userRoles = await _userManager.GetRolesAsync(user);
 
                         var claims = new List<Claim>
@@ -102,12 +104,37 @@ namespace DarkAdminPanel.WebApi.Controllers
                             RefreshToken = refreshToken
                         });
                     }
+                    else
+                    {
+                        await _userManager.AccessFailedAsync(user); 
 
-                    return Unauthorized();
+                        int failcount = await _userManager.GetAccessFailedCountAsync(user); 
 
+                        if (failcount == 3)
+                        {
+                            await _userManager.SetLockoutEndDateAsync(user, new DateTimeOffset(DateTime.Now.AddMinutes(1)));
+                            
+                            ModelState.AddModelError("Locked", "Şifrənizi ard arda 3 dəfə yalnış girdiyiniz üçün hesabiniz 1 dəqiqəlik bloklandı");
+                        }
+                        else
+                        {
+                            if (signInResult.IsLockedOut)
+                                ModelState.AddModelError("Locked", "Şifrənizi ard arda 3 dəfə yalnış girdiyiniz üçün hesabiniz 2 dəqiqəlik bloklanıb.");
+                            else
+                                ModelState.AddModelError("NotUser2", "E-posta veya şifre yanlışdır.");
+                        }
+
+                        string errorMessages = "";
+
+                        foreach (var value in ModelState.Values)
+                            foreach (var error in value.Errors)
+                                errorMessages += error.ErrorMessage;
+
+                        return Unauthorized(new { Status = StatusCodes.Status401Unauthorized, Message = errorMessages });
+                    }
                 }
 
-                return NotFound("User not found");
+                return NotFound();
             }
 
             return BadRequest();

@@ -81,7 +81,8 @@ namespace DarkAdminPanel.WebUI.Controllers
                         break;
 
                     case (int)HttpStatusCode.Unauthorized:
-                        ModelState.AddModelError("", "Email ve ya Sifre yalnisdir");
+                        var unauthorizeErrors = JsonConvert.DeserializeObject<ResponseOutputModel>(result);
+                        ModelState.AddModelError("", unauthorizeErrors.Message);
                         break;
                 }
             }
